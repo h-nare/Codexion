@@ -99,3 +99,57 @@ void heap_destroy(t_heap *heap)
     heap->size = 0;
     heap->capacity = 0;
 }
+
+int heap_remove(t_heap *heap, int coder_id)
+{
+    int i;
+    int parent;
+    int left;
+    int right;
+    int smallest;
+    t_request temp;
+
+    i = 0;
+    while(i < heap->size)
+    {
+        if(heap->requests[i].coder_id == coder_id)
+            break;
+        i++;
+    }
+    if (i == heap->size)
+        return (0);
+    heap->size--;
+    if (i == heap->size)
+        return (1);
+    heap->requests[i] = heap->requests[heap->size];
+    while(i > 0)
+    {
+        parent = (i - 1) / 2;
+        if (!higher_priority(heap->requests[i], heap->requests[parent], heap->scheduler))
+            break;
+        temp = heap->requests[i];
+        heap->requests[i] = heap->requests[parent];
+        heap->requests[parent] = temp;
+        i = parent;
+    }
+    while(1)
+    {
+        left = 2 * i + 1;
+        right = 2 * i + 2;
+        smallest = i;
+        if(left < heap->size && higher_priority(heap->requests[left],
+            heap->requests[smallest], heap->scheduler))
+            smallest = left;
+        if (right < heap->size
+            && higher_priority(heap->requests[right],
+                heap->requests[smallest], heap->scheduler))
+            smallest = right;
+        if (smallest == i)
+            break;
+        temp = heap->requests[i];
+        heap->requests[i] = heap->requests[smallest];
+        heap->requests[smallest] = temp;
+        i = smallest;
+    }
+    return (1);
+}

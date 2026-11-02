@@ -1,0 +1,47 @@
+DEBUG: Coder 1 requests dongles 0 and 1 | sequence=0 | deadline=1000
+DEBUG: Coder 2 requests dongles 1 and 2 | sequence=1 | deadline=1000
+DEBUG: Coder 2 blocked | left head=2 | right head=2
+DEBUG: Coder 3 requests dongles 2 and 3 | sequence=2 | deadline=1000
+DEBUG: Coder 3 blocked | left head=2 | right head=3
+DEBUG: Coder 4 requests dongles 3 and 4 | sequence=3 | deadline=1000
+DEBUG: Coder 4 blocked | left head=3 | right head=4
+DEBUG: Coder 5 requests dongles 4 and 0 | sequence=4 | deadline=1000
+DEBUG: Coder 5 blocked | left head=4 | right head=5
+DEBUG: Coder 4 blocked | left head=3 | right head=4
+DEBUG: Coder 2 blocked | left head=2 | right head=2
+DEBUG: Coder 3 blocked | left head=2 | right head=3
+DEBUG: Coder 5 blocked | left head=4 | right head=5
+DEBUG: Coder 3 blocked | left head=2 | right head=3
+DEBUG: Coder 4 blocked | left head=3 | right head=4
+DEBUG: Coder 2 blocked | left head=2 | right head=2
+DEBUG: Coder 5 blocked | left head=4 | right head=5
+DEBUG: Coder 2 blocked | left head=2 | right head=2
+DEBUG: Coder 4 blocked | left head=3 | right head=4
+DEBUG: Coder 5 blocked | left head=4 | right head=5
+DEBUG: Coder 3 blocked | left head=2 | right head=3
+DEBUG: Coder 4 blocked | left head=3 | right head=4
+DEBUG: Coder 2 blocked | left head=2 | right head=2
+DEBUG: Coder 5 blocked | left head=4 | right head=5
+DEBUG: Coder 3 blocked | left head=2 | right head=3
+DEBUG: Coder 3 blocked | left head=2 | right head=3
+DEBUG: Coder 4 blocked | left head=3 | right head=4
+DEBUG: Coder 2 blocked | left head=2 | right head=2
+DEBUG: Coder 5 blocked | left head=4 | right head=5
+DEBUG: Coder 3 blocked | left head=2 | right head=3
+DEBUG: Coder 5 blocked | left head=4 | right head=5
+DEBUG: Coder 2 blocked | left head=2 | right head=2
+DEBUG: Coder 4 blocked | left head=3 | right head=4
+DEBUG: Coder 3 blocked | left head=2 | right head=3
+DEBUG: Coder 5 blocked | left head=4 | right head=5
+DEBUG: Coder 2 blocked | left head=2 | right head=2
+DEBUG: Coder 4 blocked | left head=3 | right head=4
+DEBUG: Coder 2 blocked | left head=2 | right head=2
+DEBUG: Coder 3 blocked | left head=2 | right head=3
+DEBUG: Coder 5 blocked | left head=4 | right head=5
+DEBUG: Coder 4 blocked | left head=3 | right head=4
+DEBUG: Coder 3 blocked | left head=2 | right head=3
+DEBUG: Coder 5 blocked | left head=4 | right head=5
+DEBUG: Coder 2 blocked | left head=2 | right head=2
+DEBUG: Coder 4 blocked | left head=3 | right head=4
+DEBUG: Coder 1 requests dongles 0 and 1 | sequence=5 | deadline=1000
+DEBUG: Coder 2 requests dongles 1 and 2 | sequence=6 | deadline=1250

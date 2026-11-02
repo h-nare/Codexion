@@ -38,3 +38,23 @@ void sleep_ms(long duration)
         usleep(500);
     }
 }
+
+int sleep_or_stop(t_simulation *sim, long duration)
+{
+    long start;
+    long now;
+
+    start = get_time_ms();
+    if (start == -1)
+        return (0);
+    while (!simulation_stopped(sim))
+    {
+        now = get_time_ms();
+        if (now == -1)
+            return (0);
+        if (now - start >= duration)
+            return (1);
+        usleep(500);
+    }
+    return (0);
+}

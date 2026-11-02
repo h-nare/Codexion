@@ -1,27 +1,5 @@
 #include "codexion.h"
 
-static int_dongle(t_dongle *dongle, int coder_id, long now)
-{
-    if (dongle->is_taken)
-        return (0);
-    if (now < dongle->cooldown_until)
-        return (0);
-    if (dongle->requests.size == 0)
-        return (0);
-    if (dongle->requests.requests[0].coder_id != coder_id)
-        return (0);
-    return (1);
-}
-
-static int can_acquire_dongle(t_coder *coder, long now)
-{
-    if (!dongle_ready(coder->left_dongle, coder->id, now))
-        return (0);
-    if (!dongle_ready(coder->right_dongle, coder->id, now))
-        return (0);
-    return (1);
-}
-
 static void lock_dongles(t_coder *coder)
 {
     if (coder->left_dongle < coder->right_dongle)
@@ -42,25 +20,140 @@ static void unlock_dongles(t_coder *coder)
     pthread_mutex_unlock(&coder->right_dongle->mutex);
 }
 
+static int dongles_available(t_coder *coder, long now)
+{
+    if (coder->left_dongle == coder->right_dongle)
+        return (0);
+    if (coder->left_dongle->is_taken
+        || coder->right_dongle->is_taken)
+        return (0);
+    if (now < coder->left_dongle->cooldown_until
+        || now < coder->right_dongle->cooldown_until)
+        return (0);
+    return (1);
+}
+
+static int find_request(t_heap *heap, int coder_id,
+    t_request *result)
+{
+    int i;
+
+    i = 0;
+    while (i < heap->size)
+    {
+        if (heap->requests[i].coder_id == coder_id)
+        {
+            *result = heap->requests[i];
+            return (1);
+        }
+        i++;
+    }
+    return (0);
+}
+
+static int higher_priority(t_request a, t_request b,
+    t_scheduler scheduler)
+{
+    if (scheduler == EDF && a.deadline != b.deadline)
+        return (a.deadline < b.deadline);
+    if (a.sequence != b.sequence)
+        return (a.sequence < b.sequence);
+    return (a.coder_id < b.coder_id);
+}
+
+static int eligible(t_coder *coder, long now,
+    t_request *request)
+{
+    if (!dongles_available(coder, now))
+        return (0);
+    return (find_request(&coder->left_dongle->requests,
+            coder->id, request)
+        && find_request(&coder->right_dongle->requests,
+            coder->id, request));
+}
+
+static int best_eligible_coder(t_simulation *sim, long now)
+{
+    int i;
+    int best;
+    t_request request;
+    t_request best_request;
+
+    i = 0;
+    best = -1;
+    while (i < sim->config.number_of_coders)
+    {
+        if (eligible(&sim->coders[i], now, &request))
+        {
+            if (best == -1
+                || higher_priority(request, best_request,
+                    sim->config.scheduler))
+            {
+                best = i;
+                best_request = request;
+            }
+        }
+        i++;
+    }
+    return (best);
+}
 
 int try_acquire_dongles(t_coder *coder, long now)
 {
-    t_request request;
+    t_simulation *sim;
+    int best;
 
-    if(coder->left_dongle == coder->right_dongle)
+    sim = coder->sim;
+    if (now == -1 || coder->left_dongle == coder->right_dongle)
         return (0);
+
+    pthread_mutex_lock(&sim->scheduler_mutex);
+
+    best = best_eligible_coder(sim, now);
+    if (best != coder->id - 1)
+    {
+        pthread_mutex_unlock(&sim->scheduler_mutex);
+        return (0);
+    }
+
     lock_dongles(coder);
-    if(!can_acquire_dongle(coder, now))
+    heap_remove(&coder->left_dongle->requests, coder->id);
+    heap_remove(&coder->right_dongle->requests, coder->id);
+    coder->left_dongle->is_taken = 1;
+    coder->right_dongle->is_taken = 1;
+    unlock_dongles(coder);
+
+    pthread_mutex_unlock(&sim->scheduler_mutex);
+
+    log_action(coder, "has taken a dongle");
+    log_action(coder, "has taken a dongle");
+    return (1);
+}
+
+void release_dongles(t_coder *coder)
+{
+    t_simulation *sim;
+    long now;
+
+    sim = coder->sim;
+    now = get_time_ms();
+    if (now == -1)
+        stop_simulation(sim);
+
+    pthread_mutex_lock(&sim->scheduler_mutex);
+    lock_dongles(coder);
+
+    coder->left_dongle->is_taken = 0;
+    coder->right_dongle->is_taken = 0;
+
+    if (now != -1)
     {
-        unlock_dongles(coder);
-        return (0);
-    }
-    if (!heap_pop(&coder->left_dongle->requests, &request))
-    {
-        unlock_dongles(coder);
-        return (0);
+        coder->left_dongle->cooldown_until =
+            now + coder->config->dongle_cooldown;
+        coder->right_dongle->cooldown_until =
+            now + coder->config->dongle_cooldown;
     }
 
-    
-
+    unlock_dongles(coder);
+    pthread_mutex_unlock(&sim->scheduler_mutex);
 }
