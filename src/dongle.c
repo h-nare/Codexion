@@ -6,7 +6,7 @@
 /*   By: narhakob <narhakob@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/03 19:44:00 by narhakob          #+#    #+#             */
-/*   Updated: 2026/11/04 19:09:33 by narhakob         ###   ########.fr       */
+/*   Updated: 2026/11/05 20:45:41 by narhakob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,21 +44,11 @@ static int	dongles_available(t_coder *coder, long now)
 	return (1);
 }
 
-static int	find_request(t_heap *heap, int coder_id, t_request *result)
+static int    is_queue_head(t_heap *heap, int coder_id)
 {
-	int	i;
-
-	i = 0;
-	while (i < heap->size)
-	{
-		if (heap->requests[i].coder_id == coder_id)
-		{
-			*result = heap->requests[i];
-			return (1);
-		}
-		i++;
-	}
-	return (0);
+    if (heap->size == 0)
+        return (0);
+    return (heap->requests[0].coder_id == coder_id);
 }
 
 static int	higher_priority(t_request a, t_request b, t_scheduler scheduler)
@@ -70,12 +60,16 @@ static int	higher_priority(t_request a, t_request b, t_scheduler scheduler)
 	return (a.coder_id < b.coder_id);
 }
 
-static int	eligible(t_coder *coder, long now, t_request *request)
+static int    eligible(t_coder *coder, long now, t_request *request)
 {
-	if (!dongles_available(coder, now))
-		return (0);
-	return (find_request(&coder->left_dongle->requests, coder->id, request)
-		&& find_request(&coder->right_dongle->requests, coder->id, request));
+    if (!dongles_available(coder, now))
+        return (0);
+    if (!is_queue_head(&coder->left_dongle->requests, coder->id))
+        return (0);
+    if (!is_queue_head(&coder->right_dongle->requests, coder->id))
+        return (0);
+    *request = coder->left_dongle->requests.requests[0];
+    return (1);
 }
 
 static int	best_eligible_coder(t_simulation *sim, long now)
