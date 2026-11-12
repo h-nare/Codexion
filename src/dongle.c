@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   dongle.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: narehakobyan <narehakobyan@student.42.f    +#+  +:+       +#+        */
+/*   By: narhakob <narhakob@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/03 19:44:00 by narhakob          #+#    #+#             */
-/*   Updated: 2026/11/12 20:33:22 by narehakobya      ###   ########.fr       */
+/*   Updated: 2026/11/12 21:39:58 by narhakob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
- 
+
 void	lock_dongles(t_coder *coder)
 {
 	if (coder->left_dongle < coder->right_dongle)
@@ -25,17 +25,17 @@ void	lock_dongles(t_coder *coder)
 		pthread_mutex_lock(&coder->left_dongle->mutex);
 	}
 }
- 
+
 void	unlock_dongles(t_coder *coder)
 {
 	pthread_mutex_unlock(&coder->left_dongle->mutex);
 	pthread_mutex_unlock(&coder->right_dongle->mutex);
 }
- 
+
 static void	take_dongles(t_coder *coder, long now)
 {
 	long	busy;
- 
+
 	busy = now + coder->config->time_to_compile;
 	lock_dongles(coder);
 	heap_remove(&coder->left_dongle->requests, coder->id);
@@ -46,12 +46,12 @@ static void	take_dongles(t_coder *coder, long now)
 	coder->right_dongle->busy_until = busy;
 	unlock_dongles(coder);
 }
- 
+
 int	try_acquire_dongles(t_coder *coder)
 {
 	t_simulation	*sim;
 	long			now;
- 
+
 	sim = coder->sim;
 	pthread_mutex_lock(&sim->scheduler_mutex);
 	now = get_time_ms();
@@ -68,13 +68,13 @@ int	try_acquire_dongles(t_coder *coder)
 	log_action(coder, "has taken a dongle");
 	return (1);
 }
- 
+
 void	release_dongles(t_coder *coder)
 {
 	t_simulation	*sim;
 	long			now;
 	long			until;
- 
+
 	sim = coder->sim;
 	pthread_mutex_lock(&sim->scheduler_mutex);
 	lock_dongles(coder);

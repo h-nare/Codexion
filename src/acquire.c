@@ -1,5 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   acquire.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: narhakob <narhakob@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/11/12 21:31:03 by narhakob          #+#    #+#             */
+/*   Updated: 2026/11/12 21:34:28 by narhakob         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
- 
+
 void	cancel_requests(t_coder *coder)
 {
 	pthread_mutex_lock(&coder->sim->scheduler_mutex);
@@ -9,7 +21,7 @@ void	cancel_requests(t_coder *coder)
 	unlock_dongles(coder);
 	pthread_mutex_unlock(&coder->sim->scheduler_mutex);
 }
- 
+
 static int	wait_alone(t_coder *coder)
 {
 	log_action(coder, "has taken a dongle");
@@ -17,7 +29,7 @@ static int	wait_alone(t_coder *coder)
 		sleep_ms(1);
 	return (0);
 }
- 
+
 int	get_dongles(t_coder *coder)
 {
 	if (coder->left_dongle == coder->right_dongle)

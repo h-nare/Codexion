@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: narehakobyan <narehakobyan@student.42.f    +#+  +:+       +#+        */
+/*   By: narhakob <narhakob@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/03 19:41:13 by narhakob          #+#    #+#             */
-/*   Updated: 2026/11/12 18:32:59 by narehakobya      ###   ########.fr       */
+/*   Updated: 2026/11/12 21:37:37 by narhakob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
- 
+
 static int	parse_number(const char *str, long *result)
 {
 	long	number;
 	int		i;
 	int		digit;
- 
+
 	if (!str || !str[0])
 		return (0);
 	i = 0;
@@ -39,7 +39,7 @@ static int	parse_number(const char *str, long *result)
 	*result = number;
 	return (1);
 }
- 
+
 static int	parse_scheduler(const char *str, t_scheduler *scheduler)
 {
 	if (strcmp(str, "fifo") == 0)
@@ -50,11 +50,11 @@ static int	parse_scheduler(const char *str, t_scheduler *scheduler)
 		return (0);
 	return (1);
 }
- 
+
 static int	parse_values(char **argv, long *values)
 {
 	int	i;
- 
+
 	i = 0;
 	while (i < 7)
 	{
@@ -64,11 +64,11 @@ static int	parse_values(char **argv, long *values)
 	}
 	return (1);
 }
- 
+
 int	parse_arguments(int argc, char **argv, t_config *config)
 {
 	long	values[7];
- 
+
 	if (argc != 9 || !config)
 		return (0);
 	if (!parse_values(argv, values) || values[0] == 0)

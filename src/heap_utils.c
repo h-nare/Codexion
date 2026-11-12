@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heap_utils.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: narhakob <narhakob@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/11/12 21:31:40 by narhakob          #+#    #+#             */
+/*   Updated: 2026/11/12 21:41:00 by narhakob         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
 static int	request_before(t_request *a, t_request *b, t_scheduler scheduler)
@@ -12,20 +24,20 @@ static int	request_before(t_request *a, t_request *b, t_scheduler scheduler)
 		return (a->deadline < b->deadline);
 	return (a->coder_id < b->coder_id);
 }
- 
+
 static void	heap_swap(t_heap *heap, int i, int j)
 {
 	t_request	temp;
- 
+
 	temp = heap->requests[i];
 	heap->requests[i] = heap->requests[j];
 	heap->requests[j] = temp;
 }
- 
+
 void	heap_sift_up(t_heap *heap, int i)
 {
 	int	parent;
- 
+
 	while (i > 0)
 	{
 		parent = (i - 1) / 2;
@@ -36,13 +48,13 @@ void	heap_sift_up(t_heap *heap, int i)
 		i = parent;
 	}
 }
- 
+
 void	heap_sift_down(t_heap *heap, int i)
 {
 	int	left;
 	int	right;
 	int	best;
- 
+
 	while (1)
 	{
 		left = 2 * i + 1;

@@ -3,29 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: narehakobyan <narehakobyan@student.42.f    +#+  +:+       +#+        */
+/*   By: narhakob <narhakob@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/03 19:41:46 by narhakob          #+#    #+#             */
-/*   Updated: 2026/11/12 18:27:16 by narehakobya      ###   ########.fr       */
+/*   Updated: 2026/11/12 21:44:55 by narhakob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
- 
+
 long	get_time_ms(void)
 {
 	struct timespec	ts;
- 
+
 	if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0)
 		return (-1);
 	return (ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
 }
- 
+
 void	sleep_ms(long duration)
 {
 	long	start;
 	long	now;
- 
+
 	if (duration <= 0)
 		return ;
 	start = get_time_ms();
@@ -39,12 +39,12 @@ void	sleep_ms(long duration)
 		usleep(500);
 	}
 }
- 
+
 int	sleep_or_stop(t_simulation *sim, long duration)
 {
 	long	start;
 	long	now;
- 
+
 	start = get_time_ms();
 	if (start == -1)
 		return (0);

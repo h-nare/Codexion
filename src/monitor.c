@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   monitor.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: narehakobyan <narehakobyan@student.42.f    +#+  +:+       +#+        */
+/*   By: narhakob <narhakob@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/03 19:41:04 by narhakob          #+#    #+#             */
-/*   Updated: 2026/11/12 18:31:34 by narehakobya      ###   ########.fr       */
+/*   Updated: 2026/11/12 21:43:21 by narhakob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
- 
+
 static int	coder_burned_out(t_coder *coder)
 {
 	t_simulation	*sim;
 	long			now;
 	int				burned_out;
- 
+
 	sim = coder->sim;
 	burned_out = 0;
 	pthread_mutex_lock(&sim->stop_mutex);
@@ -38,12 +38,12 @@ static int	coder_burned_out(t_coder *coder)
 		log_burnout(coder);
 	return (burned_out);
 }
- 
+
 static int	all_coders_finished(t_simulation *sim)
 {
 	int	i;
 	int	finished;
- 
+
 	i = 0;
 	finished = 1;
 	while (finished && i < sim->config.number_of_coders)
@@ -55,11 +55,11 @@ static int	all_coders_finished(t_simulation *sim)
 		stop_simulation(sim);
 	return (finished);
 }
- 
+
 static void	monitor_simulation(t_simulation *sim)
 {
 	int	i;
- 
+
 	while (!simulation_stopped(sim))
 	{
 		i = 0;
@@ -74,7 +74,7 @@ static void	monitor_simulation(t_simulation *sim)
 		sleep_ms(1);
 	}
 }
- 
+
 void	*monitor_routine(void *arg)
 {
 	monitor_simulation((t_simulation *)arg);

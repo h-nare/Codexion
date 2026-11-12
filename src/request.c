@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   request.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: narehakobyan <narehakobyan@student.42.f    +#+  +:+       +#+        */
+/*   By: narhakob <narhakob@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/03 19:41:21 by narhakob          #+#    #+#             */
-/*   Updated: 2026/11/12 18:29:40 by narehakobya      ###   ########.fr       */
+/*   Updated: 2026/11/12 21:37:41 by narhakob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
- 
+
 static int	push_both(t_coder *coder, t_request *request)
 {
 	t_dongle	*left;
 	t_dongle	*right;
 	int			success;
- 
+
 	left = coder->left_dongle;
 	right = coder->right_dongle;
 	lock_dongles(coder);
@@ -31,12 +31,12 @@ static int	push_both(t_coder *coder, t_request *request)
 	unlock_dongles(coder);
 	return (success);
 }
- 
+
 int	request_both_dongles(t_coder *coder)
 {
 	t_request	request;
 	int			success;
- 
+
 	if (coder->left_dongle == coder->right_dongle)
 		return (0);
 	request.coder_id = coder->id;

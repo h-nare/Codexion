@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: narehakobyan <narehakobyan@student.42.f    +#+  +:+       +#+        */
+/*   By: narhakob <narhakob@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/03 19:44:25 by narhakob          #+#    #+#             */
-/*   Updated: 2026/11/12 18:31:11 by narehakobya      ###   ########.fr       */
+/*   Updated: 2026/11/12 21:41:16 by narhakob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
- 
+
 static int	init_one_dongle(t_simulation *sim, int i)
 {
 	t_dongle	*dongle;
- 
+
 	dongle = &sim->dongles[i];
 	dongle->is_taken = 0;
 	dongle->cooldown_until = 0;
@@ -30,11 +30,11 @@ static int	init_one_dongle(t_simulation *sim, int i)
 	}
 	return (1);
 }
- 
+
 static int	init_dongles(t_simulation *sim)
 {
 	int	i;
- 
+
 	i = 0;
 	while (i < sim->config.number_of_coders)
 	{
@@ -48,12 +48,12 @@ static int	init_dongles(t_simulation *sim)
 	}
 	return (1);
 }
- 
+
 static int	init_coders(t_simulation *sim)
 {
 	int	i;
 	int	n;
- 
+
 	n = sim->config.number_of_coders;
 	i = 0;
 	while (i < n)
@@ -75,7 +75,7 @@ static int	init_coders(t_simulation *sim)
 	}
 	return (1);
 }
- 
+
 static int	init_parts(t_simulation *sim)
 {
 	if (!init_global_mutexes(sim))
@@ -93,11 +93,11 @@ static int	init_parts(t_simulation *sim)
 	}
 	return (1);
 }
- 
+
 int	init_simulation(t_simulation *sim, t_config *config)
 {
 	int	n;
- 
+
 	if (sim == NULL || config == NULL || config->number_of_coders <= 0)
 		return (0);
 	n = config->number_of_coders;

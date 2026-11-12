@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   threads.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: narehakobyan <narehakobyan@student.42.f    +#+  +:+       +#+        */
+/*   By: narhakob <narhakob@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/03 19:41:34 by narhakob          #+#    #+#             */
-/*   Updated: 2026/11/12 18:29:06 by narehakobya      ###   ########.fr       */
+/*   Updated: 2026/11/12 21:44:43 by narhakob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
- 
+
 void	join_coders(t_simulation *sim, int created)
 {
 	int	i;
- 
+
 	i = 0;
 	while (i < created)
 	{
@@ -23,11 +23,11 @@ void	join_coders(t_simulation *sim, int created)
 		i++;
 	}
 }
- 
+
 static int	create_threads(t_simulation *sim)
 {
 	int	i;
- 
+
 	i = 0;
 	while (i < sim->config.number_of_coders)
 	{
@@ -38,11 +38,11 @@ static int	create_threads(t_simulation *sim)
 	}
 	return (i);
 }
- 
+
 int	start_coders(t_simulation *sim)
 {
 	int	i;
- 
+
 	sim->start_time = get_time_ms();
 	if (sim->start_time == -1)
 		return (0);

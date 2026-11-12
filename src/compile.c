@@ -1,11 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   compile.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: narhakob <narhakob@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/11/12 21:31:27 by narhakob          #+#    #+#             */
+/*   Updated: 2026/11/12 21:36:52 by narhakob         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
- 
+
 static int	start_compilation(t_coder *coder)
 {
 	t_simulation	*sim;
 	long			now;
 	int				allowed;
- 
+
 	sim = coder->sim;
 	allowed = 0;
 	pthread_mutex_lock(&sim->stop_mutex);
@@ -13,8 +25,8 @@ static int	start_compilation(t_coder *coder)
 	now = get_time_ms();
 	if (now == -1)
 		sim->stop = 1;
-	else if (!sim->stop
-		&& now - coder->last_compile < coder->config->time_to_burnout)
+	else if (!sim->stop && now
+		- coder->last_compile < coder->config->time_to_burnout)
 	{
 		coder->last_compile = now;
 		allowed = 1;
@@ -23,11 +35,11 @@ static int	start_compilation(t_coder *coder)
 	pthread_mutex_unlock(&sim->stop_mutex);
 	return (allowed);
 }
- 
+
 int	compile_code(t_coder *coder)
 {
 	int	completed;
- 
+
 	if (!start_compilation(coder))
 	{
 		release_dongles(coder);
@@ -44,4 +56,3 @@ int	compile_code(t_coder *coder)
 	release_dongles(coder);
 	return (completed);
 }
- 
