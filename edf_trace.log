@@ -1,0 +1,15 @@
+ACQUIRE time=633249447 coder=1 left_head=1 right_head=1 left_deadline=633251447 right_deadline=633251447 left_seq=0 right_seq=0
+ACQUIRE time=633249447 coder=3 left_head=2 right_head=3 left_deadline=633251447 right_deadline=633251447 left_seq=1 right_seq=2
+ACQUIRE time=633249697 coder=2 left_head=2 right_head=2 left_deadline=633251447 right_deadline=633251447 left_seq=1 right_seq=1
+ACQUIRE time=633249697 coder=4 left_head=4 right_head=4 left_deadline=633251447 right_deadline=633251447 left_seq=3 right_seq=3
+ACQUIRE time=633249947 coder=5 left_head=5 right_head=5 left_deadline=633251447 right_deadline=633251447 left_seq=4 right_seq=4
+ACQUIRE time=633249947 coder=3 left_head=3 right_head=3 left_deadline=633251447 right_deadline=633251447 left_seq=6 right_seq=6
+ACQUIRE time=633250197 coder=4 left_head=4 right_head=4 left_deadline=633251697 right_deadline=633251697 left_seq=7 right_seq=7
+ACQUIRE time=633250197 coder=1 left_head=1 right_head=1 left_deadline=633251447 right_deadline=633251447 left_seq=5 right_seq=5
+ACQUIRE time=633250447 coder=2 left_head=2 right_head=2 left_deadline=633251697 right_deadline=633251697 left_seq=8 right_seq=8
+ACQUIRE time=633250447 coder=5 left_head=5 right_head=5 left_deadline=633251947 right_deadline=633251947 left_seq=10 right_seq=10
+ACQUIRE time=633250697 coder=3 left_head=3 right_head=3 left_deadline=633251947 right_deadline=633251947 left_seq=9 right_seq=9
+ACQUIRE time=633250697 coder=1 left_head=1 right_head=1 left_deadline=633252197 right_deadline=633252197 left_seq=11 right_seq=11
+ACQUIRE time=633250947 coder=4 left_head=4 right_head=4 left_deadline=633252197 right_deadline=633252197 left_seq=12 right_seq=12
+ACQUIRE time=633250947 coder=2 left_head=2 right_head=2 left_deadline=633252447 right_deadline=633252447 left_seq=13 right_seq=13
+ACQUIRE time=633251197 coder=5 left_head=5 right_head=5 left_deadline=633252447 right_deadline=633252447 left_seq=14 right_seq=14

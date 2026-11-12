@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: narhakob <narhakob@student.42.fr>          +#+  +:+       +#+        */
+/*   By: narehakobyan <narehakobyan@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/03 19:41:13 by narhakob          #+#    #+#             */
-/*   Updated: 2026/11/03 19:41:14 by narhakob         ###   ########.fr       */
+/*   Updated: 2026/11/12 18:32:59 by narehakobya      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
-
-static int	parse_number(const char *str, long *result, long max)
+ 
+static int	parse_number(const char *str, long *result)
 {
 	long	number;
 	int		i;
 	int		digit;
-
+ 
 	if (!str || !str[0])
 		return (0);
 	i = 0;
@@ -31,7 +31,7 @@ static int	parse_number(const char *str, long *result, long max)
 		if (str[i] < '0' || str[i] > '9')
 			return (0);
 		digit = str[i] - '0';
-		if (number > (max - digit) / 10)
+		if (number > (INT_MAX - digit) / 10)
 			return (0);
 		number = number * 10 + digit;
 		i++;
@@ -39,7 +39,7 @@ static int	parse_number(const char *str, long *result, long max)
 	*result = number;
 	return (1);
 }
-
+ 
 static int	parse_scheduler(const char *str, t_scheduler *scheduler)
 {
 	if (strcmp(str, "fifo") == 0)
@@ -50,26 +50,28 @@ static int	parse_scheduler(const char *str, t_scheduler *scheduler)
 		return (0);
 	return (1);
 }
-
-int	parse_arguments(int argc, char **argv, t_config *config)
+ 
+static int	parse_values(char **argv, long *values)
 {
-	long	values[7];
-	long	max;
-	int		i;
-
-	if (argc != 9 || !config)
-		return (0);
+	int	i;
+ 
 	i = 0;
 	while (i < 7)
 	{
-		max = LONG_MAX;
-		if (i == 0 || i == 5)
-			max = INT_MAX;
-		if (!parse_number(argv[i + 1], &values[i], max))
+		if (!parse_number(argv[i + 1], &values[i]))
 			return (0);
 		i++;
 	}
-	if (values[0] == 0)
+	return (1);
+}
+ 
+int	parse_arguments(int argc, char **argv, t_config *config)
+{
+	long	values[7];
+ 
+	if (argc != 9 || !config)
+		return (0);
+	if (!parse_values(argv, values) || values[0] == 0)
 		return (0);
 	if (!parse_scheduler(argv[8], &config->scheduler))
 		return (0);

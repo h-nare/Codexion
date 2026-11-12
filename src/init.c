@@ -3,50 +3,57 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: narhakob <narhakob@student.42.fr>          +#+  +:+       +#+        */
+/*   By: narehakobyan <narehakobyan@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/03 19:44:25 by narhakob          #+#    #+#             */
-/*   Updated: 2026/11/03 19:44:26 by narhakob         ###   ########.fr       */
+/*   Updated: 2026/11/12 18:31:11 by narehakobya      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
-
+ 
+static int	init_one_dongle(t_simulation *sim, int i)
+{
+	t_dongle	*dongle;
+ 
+	dongle = &sim->dongles[i];
+	dongle->is_taken = 0;
+	dongle->cooldown_until = 0;
+	dongle->busy_until = 0;
+	if (pthread_mutex_init(&dongle->mutex, NULL) != 0)
+		return (0);
+	if (!heap_init(&dongle->requests, sim->config.number_of_coders,
+			sim->config.scheduler))
+	{
+		pthread_mutex_destroy(&dongle->mutex);
+		return (0);
+	}
+	return (1);
+}
+ 
 static int	init_dongles(t_simulation *sim)
 {
 	int	i;
-	int	n;
-
-	n = sim->config.number_of_coders;
+ 
 	i = 0;
-	while (i < n)
+	while (i < sim->config.number_of_coders)
 	{
-		sim->dongles[i].is_taken = 0;
-		sim->dongles[i].cooldown_until = 0;
-		if (pthread_mutex_init(&sim->dongles[i].mutex, NULL) != 0)
-			break ;
-		if (!heap_init(&sim->dongles[i].requests, n, sim->config.scheduler))
+		if (!init_one_dongle(sim, i))
 		{
-			pthread_mutex_destroy(&sim->dongles[i].mutex);
-			break ;
+			while (--i >= 0)
+				destroy_one_dongle(&sim->dongles[i]);
+			return (0);
 		}
 		i++;
 	}
-	if (i == n)
-		return (1);
-	while (--i >= 0)
-	{
-		heap_destroy(&sim->dongles[i].requests);
-		pthread_mutex_destroy(&sim->dongles[i].mutex);
-	}
-	return (0);
+	return (1);
 }
-
+ 
 static int	init_coders(t_simulation *sim)
 {
 	int	i;
 	int	n;
-
+ 
 	n = sim->config.number_of_coders;
 	i = 0;
 	while (i < n)
@@ -68,128 +75,43 @@ static int	init_coders(t_simulation *sim)
 	}
 	return (1);
 }
-
-static void	destroy_dongles(t_simulation *sim)
+ 
+static int	init_parts(t_simulation *sim)
 {
-	int	i;
-
-	i = 0;
-	while (i < sim->config.number_of_coders)
-	{
-		heap_destroy(&sim->dongles[i].requests);
-		pthread_mutex_destroy(&sim->dongles[i].mutex);
-		i++;
-	}
-}
-
-int	init_simulation(t_simulation *sim, t_config *config)
-{
-	int	n;
-	int	i;
-
-	if (sim == NULL || config == NULL)
+	if (!init_global_mutexes(sim))
 		return (0);
-	n = config->number_of_coders;
-	if (n <= 0)
-		return (0);
-	sim->start_time = 0;
-	sim->config = *config;
-	sim->coders = NULL;
-	sim->dongles = NULL;
-	sim->coders = malloc(sizeof(t_coder) * n);
-	if (!sim->coders)
-		return (0);
-	sim->dongles = malloc(sizeof(t_dongle) * n);
-	if (!sim->dongles)
-	{
-		free(sim->coders);
-		sim->coders = NULL;
-		return (0);
-	}
 	if (!init_dongles(sim))
 	{
-		free(sim->dongles);
-		free(sim->coders);
-		sim->dongles = NULL;
-		sim->coders = NULL;
-		return (0);
-	}
-	sim->next_sequence = 0;
-	sim->stop = 0;
-	if (pthread_mutex_init(&sim->sequence_mutex, NULL) != 0)
-	{
-		destroy_dongles(sim);
-		free(sim->dongles);
-		free(sim->coders);
-		return (0);
-	}
-	if (pthread_mutex_init(&sim->stop_mutex, NULL) != 0)
-	{
-		pthread_mutex_destroy(&sim->sequence_mutex);
-		destroy_dongles(sim);
-		free(sim->dongles);
-		free(sim->coders);
-		return (0);
-	}
-	if (pthread_mutex_init(&sim->log_mutex, NULL) != 0)
-	{
-		pthread_mutex_destroy(&sim->stop_mutex);
-		pthread_mutex_destroy(&sim->sequence_mutex);
-		destroy_dongles(sim);
-		free(sim->dongles);
-		free(sim->coders);
+		destroy_global_mutexes(sim);
 		return (0);
 	}
 	if (!init_coders(sim))
 	{
-		pthread_mutex_destroy(&sim->log_mutex);
-		pthread_mutex_destroy(&sim->stop_mutex);
-		pthread_mutex_destroy(&sim->sequence_mutex);
 		destroy_dongles(sim);
-		free(sim->dongles);
-		free(sim->coders);
-		return (0);
-	}
-	if (pthread_mutex_init(&sim->scheduler_mutex, NULL) != 0)
-	{
-		i = 0;
-		while (i < n)
-		{
-			pthread_mutex_destroy(&sim->coders[i].state_mutex);
-			i++;
-		}
-		pthread_mutex_destroy(&sim->log_mutex);
-		pthread_mutex_destroy(&sim->stop_mutex);
-		pthread_mutex_destroy(&sim->sequence_mutex);
-		destroy_dongles(sim);
-		free(sim->dongles);
-		free(sim->coders);
-		sim->dongles = NULL;
-		sim->coders = NULL;
+		destroy_global_mutexes(sim);
 		return (0);
 	}
 	return (1);
 }
-
-void	destroy_simulation(t_simulation *sim)
+ 
+int	init_simulation(t_simulation *sim, t_config *config)
 {
-	int	i;
-
-	if (sim == NULL)
-		return ;
-	i = 0;
-	while (i < sim->config.number_of_coders)
-	{
-		pthread_mutex_destroy(&sim->coders[i].state_mutex);
-		i++;
-	}
-	destroy_dongles(sim);
-	pthread_mutex_destroy(&sim->scheduler_mutex);
-	pthread_mutex_destroy(&sim->log_mutex);
-	pthread_mutex_destroy(&sim->stop_mutex);
-	pthread_mutex_destroy(&sim->sequence_mutex);
+	int	n;
+ 
+	if (sim == NULL || config == NULL || config->number_of_coders <= 0)
+		return (0);
+	n = config->number_of_coders;
+	sim->config = *config;
+	sim->start_time = 0;
+	sim->next_sequence = 0;
+	sim->stop = 0;
+	sim->coders = malloc(sizeof(t_coder) * n);
+	sim->dongles = malloc(sizeof(t_dongle) * n);
+	if (sim->coders != NULL && sim->dongles != NULL && init_parts(sim))
+		return (1);
 	free(sim->coders);
 	free(sim->dongles);
 	sim->coders = NULL;
 	sim->dongles = NULL;
+	return (0);
 }

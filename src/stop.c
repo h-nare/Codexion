@@ -3,46 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   stop.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: narhakob <narhakob@student.42.fr>          +#+  +:+       +#+        */
+/*   By: narehakobyan <narehakobyan@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/03 19:41:26 by narhakob          #+#    #+#             */
-/*   Updated: 2026/11/03 19:45:11 by narhakob         ###   ########.fr       */
+/*   Updated: 2026/11/12 18:22:57 by narehakobya      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
-
+ 
 int	simulation_stopped(t_simulation *sim)
 {
 	int	stopped;
-
+ 
 	pthread_mutex_lock(&sim->stop_mutex);
 	stopped = sim->stop;
 	pthread_mutex_unlock(&sim->stop_mutex);
 	return (stopped);
 }
-
-int	check_coder_burnout(t_coder *coder, long now)
-{
-	t_simulation	*sim;
-	int				burned_out;
-
-	sim = coder->sim;
-	burned_out = 0;
-	pthread_mutex_lock(&sim->stop_mutex);
-	pthread_mutex_lock(&coder->state_mutex);
-	if (!sim->stop
-		&& coder->compiles_done < coder->config->number_of_compiles_required
-		&& now - coder->last_compile >= coder->config->time_to_burnout)
-	{
-		sim->stop = 1;
-		burned_out = 1;
-	}
-	pthread_mutex_unlock(&coder->state_mutex);
-	pthread_mutex_unlock(&sim->stop_mutex);
-	return (burned_out);
-}
-
+ 
 void	stop_simulation(t_simulation *sim)
 {
 	pthread_mutex_lock(&sim->stop_mutex);
